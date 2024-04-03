@@ -24,6 +24,9 @@
 **Create App :** <br/>
 `$ python manage.py startapp <appName>` <br/>
 <br/>
+**Create Migrations :** <br/>
+`$ python manage.py makemigrations` <br/>
+<br/>
 **Apply Migrations :** <br/>
 `$ python manage.py migrate` <br/>
 <br/>
