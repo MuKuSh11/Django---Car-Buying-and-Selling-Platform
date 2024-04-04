@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from main import urls as main_app_urls
+from users import urls as user_app_urls
 
 from django.conf import settings
 
@@ -25,6 +26,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include(main_app_urls)),
+    path('',include(user_app_urls)),
 ]
 
 # follow this practice only when app is running in DEBUG mode
