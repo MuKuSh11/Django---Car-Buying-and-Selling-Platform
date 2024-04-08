@@ -1,5 +1,6 @@
 {% extends 'base/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block 'title' %}
 <title> AutoMax . Home</title>
@@ -15,9 +16,9 @@
                 <a href="{% url 'list' %}" class="btn btn-primary my-2">List Your Car</a>
             </div>
             <div class="col-lg-6 col-md-8 mx-auto">
-                <!-- Listing Form -->
-                <form action="">
-
+                <form action="" method="GET">
+                    {{ listing_filter.form|crispy }}
+                    <button class="btn btn-sm btn-danger mt-2" type="submit">Submit</button>
                 </form>
             </div>
         </div>
@@ -25,7 +26,9 @@
     <div class="album py-5 bg-light">
         <div class="container">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                {% for listing in listings %}
+                {% comment %} {% for listing in listings %} -> This will list all the listings {% endcomment %}
+                {% comment %} {% for listing in listing_filter.qs %} -> This will list only the filtered listings, if none, lists all of them {% endcomment %}
+                {% for listing in listing_filter.qs %}
                 <div class="col">
                     {% include 'components/listing_card.html' %}
                 </div>
