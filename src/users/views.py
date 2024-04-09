@@ -9,6 +9,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 
 from .forms import LocationForm, ProfileForm, UserForm
+from main.models import Listing
 
 # Create your views here.
 def login_view(request):
@@ -62,4 +63,18 @@ class ProfileView(View):
         user_form = UserForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
         location_form = LocationForm(instance=request.user.profile.location)
+        return render(request, 'views/profile.html', {'user_form': user_form, 'profile_form': profile_form, 'location_form': location_form})
+    
+    def post(self, request):
+        # setting instance=request.user > so it updates the current user and do not create a new user
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        location_form = LocationForm(request.POST, instance=request.user.profile.location)
+        if user_form.is_valid() and profile_form.is_valid() and location_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            location_form.save()
+            messages.success(request, f'Profile updated successfully.')
+        else:
+            messages.error(request, f'Error updating profile.')
         return render(request, 'views/profile.html', {'user_form': user_form, 'profile_form': profile_form, 'location_form': location_form})
