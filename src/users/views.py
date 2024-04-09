@@ -6,6 +6,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import View
+from django.utils.decorators import method_decorator
+
+from .forms import LocationForm, ProfileForm, UserForm
 
 # Create your views here.
 def login_view(request):
@@ -27,6 +30,11 @@ def login_view(request):
         login_form = AuthenticationForm()
     return render(request, 'views/login.html', {"login_form": login_form})
 
+@login_required
+def logout_view(request):
+    # logout user and redirect to home page
+    logout(request)
+    return redirect('main')
 class RegisterView(View):
     # method to handle GET request
     def get(self, request):
@@ -37,7 +45,7 @@ class RegisterView(View):
         register_form = UserCreationForm(data=request.POST)
         if register_form.is_valid():
             user = register_form.save() # saves the user in DB
-            user.refresh_from_db() # takes the instance we are referring to and it goes to DB and sees the current data
+            user.refresh_from_db() # takes the instance we are referring to and it goes to DB and gets the current data
             if user is not None:
                 login(request, user)
                 messages.success(request, f'User {user.username} registered successfully.')
@@ -48,8 +56,10 @@ class RegisterView(View):
             messages.error(request, f'An error occured trying to register.')
             return render(request, 'views/register.html', {'register_form': register_form})
 
-@login_required
-def logout_view(request):
-    # logout user and redirect to home page
-    logout(request)
-    return redirect('main')
+@method_decorator(login_required, name="dispatch")
+class ProfileView(View):
+    def get(self, request):
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+        location_form = LocationForm(instance=request.user.profile.location)
+        return render(request, 'views/profile.html', {'user_form': user_form, 'profile_form': profile_form, 'location_form': location_form})
