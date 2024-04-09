@@ -60,12 +60,15 @@ class RegisterView(View):
 @method_decorator(login_required, name="dispatch")
 class ProfileView(View):
     def get(self, request):
+        user_listings = Listing.objects.filter(seller=request.user.profile)
         user_form = UserForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
         location_form = LocationForm(instance=request.user.profile.location)
-        return render(request, 'views/profile.html', {'user_form': user_form, 'profile_form': profile_form, 'location_form': location_form})
+        return render(request, 'views/profile.html',
+            {'user_form': user_form, 'profile_form': profile_form, 'location_form': location_form, 'user_listings': user_listings})
     
     def post(self, request):
+        user_listings = Listing.objects.filter(seller=request.user.profile)
         # setting instance=request.user > so it updates the current user and do not create a new user
         user_form = UserForm(request.POST, instance=request.user)
         profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
@@ -77,4 +80,5 @@ class ProfileView(View):
             messages.success(request, f'Profile updated successfully.')
         else:
             messages.error(request, f'Error updating profile.')
-        return render(request, 'views/profile.html', {'user_form': user_form, 'profile_form': profile_form, 'location_form': location_form})
+        return render(request, 'views/profile.html',
+            {'user_form': user_form, 'profile_form': profile_form, 'location_form': location_form, 'user_listings': user_listings})
