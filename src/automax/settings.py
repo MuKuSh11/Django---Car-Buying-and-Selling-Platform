@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 import environ
 from pathlib import Path
+from distutils.util import strtobool
 
 from django.contrib.messages import constants as messages
 
@@ -86,12 +87,24 @@ WSGI_APPLICATION = 'automax.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if env('USEDEBUGDB') == 'True':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': env('DBNAME'),
+            'USER': env('DBUSER'),
+            'PASSWORD': env('DBPASSWORD'),
+            'HOST': env('DBHOST'),
+            'PORT': env('DBPORT'),
+        }
+    }
 
 
 # Password validation
