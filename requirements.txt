@@ -13,9 +13,11 @@ django-filter==24.2
 django-localflavor==4.0
 django-storages==1.14.2
 frozenlist==1.4.1
+gunicorn==22.0.0
 idna==3.7
 jmespath==1.0.1
 multidict==6.0.5
+packaging==24.0
 pillow==10.3.0
 psycopg2-binary==2.9.9
 python-dateutil==2.9.0.post0
